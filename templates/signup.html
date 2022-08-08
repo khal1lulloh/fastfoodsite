@@ -1,7 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
 <html>
-
 <head>
   <!-- Basic -->
   <meta charset="utf-8" />
@@ -12,7 +11,7 @@
   <meta name="keywords" content="" />
   <meta name="description" content="" />
   <meta name="author" content="" />
-  <link rel="shortcut icon" href="images/favicon.png" type="">
+  <link rel="shortcut icon" href="{% static 'images/favicon.png' %}" type="">
 
   <title> Feane </title>
 
@@ -30,24 +29,18 @@
   <link href="{% static 'css/style.css' %}" rel="stylesheet" />
   <!-- responsive style -->
   <link href="{% static 'css/responsive.css' %}" rel="stylesheet" />
-  <style>
-    #soz {
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      overflow: hidden;
-    }
-  </style>
 
 </head>
 
 <body>
+  <!-- class="sub_page" -->
 
-  <div class="hero_area">
+<div class="hero_area">
     <div class="bg-box">
       <img src="{% static 'images/hero-bg.jpg' %}" alt="">
     </div>
-    <!-- header section strats -->
-    <header class="header_section">
+
+<header class="header_section">
       <div class="container">
         <nav class="navbar navbar-expand-lg custom_nav-container ">
           <a class="navbar-brand" href="{% url 'index' %}">
@@ -62,61 +55,159 @@
 
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav  mx-auto ">
-              
+              <li class="nav-item">
+                <a class="nav-link" > <span class="sr-only">(current)</span></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" ></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link"></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" > </a>
+              </li>
             </ul>
-            <div class="user_option">
-              <a class="order_online" href="{% url 'login' %}">
-                Saytga kirish
-              </a>
-              <a href="{% url 'signup' %}" class="order_online">
-                Ro'yhatdan o'tish
-              </a>
+
+            <!-- login qismi -->
+            <div class="user_option"><style>
+/* Style The Dropdown Button */
+.dropbtn {
+        display: inline-block;
+    padding: 10px 45px;
+    background-color: #ffbe33;
+    color: #ffffff;
+    border-radius: 45px;
+    -webkit-transition: all 0.3s;
+    transition: all 0.3s;
+    border: none;
+    margin-top: 10px;
+}
+}
+
+/* The container <div> - needed to position the dropdown content */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+  display: none;
+  position: absolute;
+
+  min-width: 150px;
+ /* box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);*/
+  z-index: 1;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  border-radius: 45px;
+
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content a:hover {background-color: #yellow;
+color: #ffbe33;}
+
+/* Show the dropdown menu on hover */
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+/* Change the background color of the dropdown button when the dropdown content is shown */
+.dropdown:hover .dropbtn {
+  background-color: #3e8e41;
+}
+</style>
+ {% if user.is_authenticated %}
+<div class="dropdown">
+  <button class="dropbtn">{{ user.username|title }}</button>
+  <div class="dropdown-content">
+    <a href="#">Link 1</a>
+    <a href="#">Link 2</a>
+    <a href="{% url 'logout' %}">Chiqish</a>
+  </div>
+</div>
+  
+
+{% else %}
+<form class="form-inline ml-auto">
+<a href="" class="order_online" style="margin: 15px;">
+Saytga kirish</a>
+<a href="" class="order_online">
+Ro'yxatdan o'tish</a>
+</form>
+{% endif %}
+             <!-- login qismi tugashi -->
+
+            
             </div>
           </div>
         </nav>
       </div>
     </header>
 
-<!-- Section -->
 
-<section class="book_section layout_padding">
+
+
+
+
+
+
+
+
+
+
+
+
+ <section class="book_section layout_padding">
     <div class="container">
       <div class="heading_container">
-        <h2 style="color:white">
-          Ma'lumotlarni kiriting
+        <h2 style="color:white;">
+          Ma'lumotlaringni kiriting...
         </h2>
       </div>
       <div class="row">
         <div class="col-md-6">
           <div class="form_container">
-            <form method="post"> {% csrf_token %}
+            <form method="post">{% csrf_token %}
               <div>
-                <input class="form-control" type="text" placeholder="Ismingizni kiriting" name="username" maxlength="150" autofocus="" autocapitalize="none" autocomplete="username" required="" id="id_username">
+                <input type="text" class="form-control" placeholder="Ismingizni kiriting " name="username" maxlength="150" autocapitalize="none" autocomplete="username" autofocus="" required="" id="id_username">
               </div>
               <div>
-                <input class="form-control" type="password" name="password1" placeholder="Parolingizni kiriting" autocomplete="new-password" required="" id="id_password1"> 
+                <input type="password" class="form-control" placeholder="Parolingizni kiriting " name="password" autocomplete="new-password" required="" id="id_password1">
               </div>
-              <div>
-                <input class="form-control" type="password" name="password2" placeholder="Parolingizni qayta kiriting" autocomplete="new-password" required="" id="id_password2">
-              </div>
-              <br>
-              <br>
-              <br>
-              <br>
-              <div class="btn_box" type="submit">
-                <button>
-                  Ro'yhatdan o'tish
+              <!-- <div>
+                <input type="password" class="form-control" placeholder="Parolingizni qayta kiriting " name="password2" autocomplete="new-password" required="" id="id_password2">
+              </div> -->
+              <div class="btn_box">
+                <button class="order_online" style="text-transform:none ;" type="submit">
+                 Ro'yxatdan o'tish
                 </button>
               </div>
             </form>
           </div>
         </div>
+
       </div>
     </div>
   </section>
 
-<!-- Footer -->
-<footer class="footer_section">
+</div>
+  <!-- End Google Map -->
+
+<!-- footer section -->
+  <footer class="footer_section">
+    <div class="container">
+      <div class="row">
+        
+        
       <div class="footer-info">
         <p>
           &copy; <span id="displayYear"></span> All Rights Reserved By
@@ -127,15 +218,14 @@
       </div>
     </div>
   </footer>
-  <!-- footer section -->
 
-  <!-- jQery -->
-  <script src="js/jquery-3.4.1.min.js"></script>
+
+ <script src="{% static 'js/jquery-3.4.1.min.js' %}"></script>
   <!-- popper js -->
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous">
   </script>
   <!-- bootstrap js -->
-  <script src="js/bootstrap.js"></script>
+  <script src="{% static 'js/bootstrap.js' %}"></script>
   <!-- owl slider -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js">
   </script>
@@ -144,11 +234,13 @@
   <!-- nice select -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/js/jquery.nice-select.min.js"></script>
   <!-- custom js -->
-  <script src="js/custom.js"></script>
+  <script src="{% static 'js/custom.js' %}"></script>
   <!-- Google Map -->
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCh39n5U-4IoWpsVGUHWdqB6puEkhRLdmI&callback=myMap">
   </script>
   <!-- End Google Map -->
+
+
 
 </body>
 

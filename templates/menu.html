@@ -1,9 +1,11 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <!-- food section -->
+    <!-- end header section -->
 
-  <section class="food_section layout_padding">
+
+  <!-- food section -->
+  <section class="food_section layout_padding-bottom">
     <div class="container">
       <div class="heading_container heading_center">
         <h2 style="color: white;">
@@ -18,9 +20,10 @@
         <li data-filter=".pasta">Pasta</li>
         <li data-filter=".fries">Fries</li>
       </ul>
-
-      <div class="filters-content">
-        <div class="row grid">{% for product in page %}
+<!-- menular qismi boshi -->
+     <div class="filters-content">
+        <div class="row grid">
+          {% for product in page %}
           
           <div class="col-sm-6 col-lg-4 all pizza">
             
@@ -32,57 +35,64 @@
                 
                 </div>
                 <div class="detail-box">
-                  <h5>
-                    {{ product.name }}
-                  </h5>
+                  <h5>{{ product.name }}</h5>
                   <p id='soz'>
                     {{ product.description }}
                   </p>
-                  <div class="">
-                    <hr>
-                    {% if user.is_authenticated %}
-                    <button data-product={{ product.id }} data-action='add' class="btn btn-outline-secondary add-btn update-cart" id="button Add to Cartadd">Add to cart</button>
-                    <a class="btn btn-outline-success" data-toggle="modal" data-target="#exampleModal-{{ forloop.counter }}">View</a>
-                    <h4 style="display: inline-block; float: right;">
-                      <strong>
-                        ${{ product.price }}
-                      </strong>
-                    </h4>
-                    {% else %}
-                    <a href="{% url 'login' %}">
-                      <button id="buttonad">
-                        Add to cart
-                      </button>
-                    </a>
-                    <a class="btn btn-outline-success" data-toggle="modal" data-target="#exampleModal-{{ forloop.counter }}">View</a>
-                    <h4 style="display: inline-block; float: right;">
-                      <strong>
-                        ${{ product.price }}
-                      </strong>
-                     </h4>
-                    {% endif %}
+                  <!-- <div class="options">  shu divdan boshlab uchiring -->
+<!-- Savat icon ni uchirib o'rniga shart bilan knopkalarimizni joylashtiramiz -->
+<div class="">
+<hr>
+{% if user.is_authenticated %}
+<!-- bu qismi js ni kodlari uchun mahsulot idsini olishimiz uchun -->
+  <button data-product='{{ product.id }}' data-action='add'  class="btn btn-outline-secondary add-btn update-cart" id="button Add to Cartadd">Add to Cart
+    </button>
+<a class="btn btn-outline-success" data-toggle="modal" data-target="#exampleModal-{{ forloop.counter }}">View</a>
+<h4 style="display: inline-block; float: right">
+  <strong>
+    {{ product.price }} so'm
+  </strong>
+</h4>
+
+{% else %}
+<a href="{% url 'login' %}">
+  <button id="buttonadd">
+  Add to Cart
+  </button>
+</a>
+<a class="btn btn-outline-success" data-toggle="modal" data-target="#exampleModal-{{ forloop.counter }}">View</a>
+<h4 style="display: inline-block; float: right">
+  <strong>
+  {{ product.price }} so'm
+  </strong>
+</h4>
+{% endif %}
+<!-- 5-bosqich js kodlaridan foydalanish -->
+<!-- ADD CART bosilsa savatga qushamiz js yaratamiz -->
+<!-- statsic papkasi ichida js papkasini ichiga cart.js fayl yaratmiz va base.htmlga usha faylni ulab quyamiz -->
+
+                    
+<!-- Tugash qismi -->                 
                   </div>
                 </div>
               </div>
             </div>
-
            </div>
            {% endfor %}
         </div>
       </div>
-     <!-- menular tugashi -->
    <br>
         <div class="col-md-6">
             <div class="col-12 my-5">
               <nav aria-label="Page Navigation">
                    {% if page.has_previous %}
-                    <a href="{% url 'menu'%}?page={{page.previous_page_number }}"><button type="button">Oldingi sahifa</button></a>
+                    <a href="{% url 'menu'%}?page={{page.previous_page_number }}"><button type="button" id='button'>Oldingi sahifa</button></a>
                       {% endif %} | 
                       {% if page.has_next %}
-                    <a href="{% url 'menu' %}?page={{page.next_page_number}}"><button type="button">Keyingi sahifa</button></a>
+                    <a href="{% url 'menu' %}?page={{page.next_page_number}}"><button type="button" id='button'>Keyingi sahifa</button></a>
                       {%endif%}
                       <style type="text/css">
-                        button{ 
+                        #button { 
                               margin-top: 15px;
                               border: none;
                               text-transform: uppercase;
@@ -98,7 +108,57 @@
                </style> 
               </nav>
             </div>
+          </div>
+
+<!-- Mahsulotlarni qalqib chiqadigan card hosil qilish -->
+<style>
+  .modal-header {
+    flex-direction: column;
+    position: relative;
+    align-items: center;
+  }
+  .modal-dialog {
+    max-width: 250px;
+  }
+  .modal-content {
+    width: 139%;
+    
+  }
+  .close {
+    position: absolute;
+    top: ;
+    right: 16px;
+  }
+</style>
+
+{% for product in page %}
+<div class="modal fade" id="exampleModal-{{ forloop.counter }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel-{{ forloop.counter }}
+" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <img src="{{ product.image.url }}" alt="" width="150">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <h3>{{ product.name }}</h3>
+        <p>{{ product.description }}</p>
+        <div>
+          <span class="price">{{ product.price }} so'm</span>
+          <div>
+            <i></i>
+          </div>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %}
+<!-- Tugash qismi -->
+
+
     </div>
   </section>
 

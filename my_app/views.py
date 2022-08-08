@@ -5,10 +5,36 @@ from django.core.paginator import Paginator
 import requests
 from django.urls import reverse_lazy
 # Create your views here.
+from .models import *
+from django.http import JsonResponse
+import json
 
-class IndexPageViews(ListView):
-	model = Product
-	template_name = 'index.html'
+# class IndexPageViews(ListView):
+# 	model = Product
+# 	template_name = 'index.html'
+def indexPageViews(request):
+	if request.user.is_authenticated:
+		model = Product.objects.all()
+		customer = request.user
+		order, created = Order.objects.get_or_create(customer=customer,complete=False)
+		items = order.orderitem_set.all()
+		cartItems = order.get_cart_items
+		ctx = {
+		'keys':model,
+		'cartItems':cartItems
+		}
+		return render(request,'index.html',ctx)
+
+	else:
+		model = Product.objects.all()
+		items = []
+		order = {'get_cart_total': 0,"get_cart_items": 0}
+		cartItems = order['get_cart_items']
+		ctx = {
+		'keys':model,
+		'cartItems':cartItems
+		}
+		return render(request,'index.html',ctx)
 
 def menuPageViews(request):
 	if request.user.is_authenticated:
@@ -34,8 +60,71 @@ def menuPageViews(request):
 	}
 	return render(request,'menu.html',context)
 
-class AboutPageViews(TemplateView):
-	template_name = 'about.html'
+def updateItem(request):
+	data = json.loads(request.body)
+	productId = data['productId']
+	action = data['action']
+	print('Bosildi: ',action) #terminalda mahsulot ID si ko'rinishi kerak
+	print('Mahsulot IDsi: ',productId)
+
+	# keyingi uzgarish POST create qilish
+	# base.html dagi savat iconi ga  mahsulot soni korsatishimiz kerak
+	customer = request.user
+	product = Product.objects.get(id=productId)
+	order, created = Order.objects.get_or_create(customer=customer,complete=False)
+
+	orderItem, created = OrderItem.objects.get_or_create(order=order, product=product)
+
+	if action == 'add':
+		orderItem.quantity = (orderItem.quantity + 1)
+	elif action == 'remove':
+		orderItem.quantity = (orderItem.quantity - 1)
+	
+	orderItem.save()
+
+	if orderItem.quantity <= 0:
+		orderItem.delete()
+
+	return JsonResponse('Item was added', safe=False)
+	# ushbu funksiyaga url yasashimiz kerak
+
+def cart(request):
+	if request.user.is_authenticated:
+		customer = request.user
+		order, created = Order.objects.get_or_create(customer=customer,complete=False)
+		items = order.orderitem_set.all()
+		cartItems = order.get_cart_items
+	else:
+		# reverse_lazy('login')
+		items = []
+		order = {'get_cart_total': 0, "get_cart_items": 0}
+		cartItems = order['get_cart_items']
+
+	context = {"items": items,"order": order,'cartItems':cartItems }
+	return render(request, 'cart.html', context)
+	# ushbu funksiyaga url yasashimiz kerak
+	# base html dagi savat urliga cart ni belgilab quyishimiz kerak
+
+
+def aboutPageViews(request):
+	if request.user.is_authenticated:
+		customer = request.user
+		order, created = Order.objects.get_or_create(customer=customer,complete=False)
+		items = order.orderitem_set.all()
+		cartItems = order.get_cart_items
+		ctx = {
+		'cartItems':cartItems
+		}
+		return render(request,'about.html',ctx)
+	else:
+		items = []
+		order = {'get_cart_total': 0,"get_cart_items": 0}
+		cartItems = order['get_cart_items']
+		ctx = {
+		'cartItems':cartItems
+		}
+		return render(request,'about.html',ctx)
+	
 
 class ProductCreateViews(CreateView):
 	model = Product
@@ -54,21 +143,50 @@ def telegram_bot_sendtext(bot_message):
     response = requests.get(send_text)   
     return response.json()
 
-def BookPageViews(request):
-    if request.method == 'POST':
-        name = request.POST.get('name',None)
-        phone = request.POST.get('phone',None)
-        email = request.POST.get('email',None)
-        message = request.POST.get('message',None)
-        user = Comment.objects.create(
-            userName = name,
-            phone = phone,
-            email = email,
-            message = message
-            )
-        user.save()
-        telegram_bot_sendtext(f"{user}\nTelefon raqami: {phone}\nXabari: {message}")
-        
-       
-    return render(request=request,template_name= 'book.html')
+def bookPageViews(request):
+	if request.user.is_authenticated:
+		if request.method == 'POST':
+			name = request.POST.get('name',None)
+			phone = request.POST.get('phone',None)
+			email = request.POST.get('email',None)
+			message = request.POST.get('message',None)
+			user = Comment.objects.create(
+				userName = name,
+				phone = phone,
+				email = email,
+				message = message
+				)
+			user.save()
+			telegram_bot_sendtext(f"Ismi: {user}\nTelefon raqami: {phone}\nXabari: {message}")
+		
+		customer = request.user
+		order, created = Order.objects.get_or_create(customer=customer,complete=False)
+		items = order.orderitem_set.all()
+		cartItems = order.get_cart_items
+		ctx = {
+		'cartItems':cartItems
+		}
+		return render(request,'book.html',ctx)
+
+	else:
+		if request.method == 'POST':
+			name = request.POST.get('name',None)
+			phone = request.POST.get('phone',None)
+			email = request.POST.get('email',None)
+			message = request.POST.get('message',None)
+			user = Comment.objects.create(
+				userName = name,
+				phone = phone,
+				email = email,
+				message = message
+			)
+			user.save()
+			telegram_bot_sendtext(f"Ismi: {user}\nTelefon raqami: {phone}\nXabari: {message}")
+		items = []
+		order = {'get_cart_total': 0,"get_cart_items": 0}
+		cartItems = order['get_cart_items']
+		ctx = {
+		'cartItems':cartItems
+		}
+		return render(request,'book.html',ctx)
 

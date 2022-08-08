@@ -1,11 +1,12 @@
 from django.db import models
-from django.contrib.auth.models import User
+from accounts.models import User
+# from django.contrib.auth.models import User
 
 # Create your models here.
 class Product(models.Model):
 	name = models.CharField(max_length=150)
 	description = models.TextField()
-	price = models.CharField(max_length=9)
+	price = models.IntegerField()
 	image = models.ImageField(upload_to='image/')
 
 	def __str__(self):
